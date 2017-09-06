@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	
+<head>
+    <meta charset="utf-8">
+    <title>Bricklayer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+    <!--
+        <script type="text/javascript" src="https://bb.githack.com/tyouhyou/z/raw/master/z.js"></script>
+        <script type="text/javascript" src="https://bb.githack.com/tyouhyou/z/raw/master/zui.js"></script>
+        <link rel="stylesheet" href="https://bb.githack.com/tyouhyou/z/raw/master/zui.css" type="text/css" />
+    -->
+    <script type="text/javascript" src="../canvas-5-polyfill/canvas.js"></script>
+
+    <script type="text/javascript" src="../zlibjs/z.js"></script>
+    <script type="text/javascript" src="../zlibjs/zui.js"></script>
+    <link rel="stylesheet" href="../zlibjs/zui.css" type="text/css" />
+    
+    <script type="text/javascript" src="./bricklayer.js"></script>
+    <script type="text/javascript" src="./mino.js"></script>
+    <link rel="stylesheet" href="./bricklayer.css" type="text/css" />
+    <style type="text/css">
+    #gameboard ,#kpad {
+        display: inline-block;
+    }
+    </style>
+</head>
+
+<body>
+	
+	<div id="gameboard">
+	    <div id="playground">
+            <canvas id="canvas"></canvas>
+        </div>
+        <div id="scoreboard">
+            <svg id="nextmino">
+                <path style="fill:#42cc3b;stroke:black;stroke-width:1"/>
+            </svg>
+            <div id="score"></div>
+        </div>
+	</div>
+	<div id="kpad"></div>
+
+    <script>
+        /* global Game, KPad, KeyCode, $ */
+    
+        $.prototype.onOrientationChanged(resize);
+        function resize(isPortrait) {
+            var body = $("body"),
+            width = body.width(),
+            height = body.height(),
+            sg = (width > height ? height : width) + "px",
+            sk = Math.abs(height - width);
+            game.size(sg, sg);
+            if (undefined == isPortrait) {
+                isPortrait = height > width;
+            }
+            if (isPortrait) {
+                kpad.size(width, sk);
+            } else {
+                kpad.size(sk, height);
+            }
+        }
+        
+        var game = new Game({
+            gameboard: "#gameboard",
+            playground: "#playground",
+            scoreboard: "#scoreboard"
+        });
+        
+        var kpad = new KPad("#kpad");
+        kpad.show();
+        
+        resize();
+        
+        game.init();
+        
+        kpad.onPress = function(key) {
+            game.onKey(key);
+        };
+        
+        game.start();
+    </script>
+
+</body>
+
+</html>

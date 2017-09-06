@@ -1,0 +1,53 @@
+html, body {
+    position: relative;
+    left: 0;
+    top: 0;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.gameboard {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    background-color: #041C24;
+    opacity: 0.9;
+}
+
+.board, .board canvas {
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    box-sizing: border-box;
+    border: 2px outset;
+    border-color: #316FAD;
+    border-color: rgba(49,111,173,0.8);
+}
+
+.playground {
+    left: 0;
+    width: 60%;
+}
+
+.scoreboard {
+    right: 0;
+    width: 40%;
+}
+
+@media only screen and (orientation : landscape) {
+    .kpad {
+        top: 0;
+        right: 0;
+    }
+}
+
+@media only screen and (orientation : portrait) {
+    .kpad {
+        bottom: 0;
+        left: 0;
+    }
+}

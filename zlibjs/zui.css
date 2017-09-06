@@ -1,0 +1,313 @@
+
+/***************** MessageBox styles ********************/
+
+.messagebox-container {
+    display: none;
+    position: fixed;
+    z-index: 99;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.messagebox-box {
+    position: relative;
+    background-color: #dedede;
+    width: 50%;
+    overflow: auto;
+    
+    border: 1px solid #888;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.4), 0 6px 20px 0 rgba(0,0,0,0.3);
+    
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    -webkit-animation-name: animatetop;
+    -moz-animation-name: animatetop;
+    -o-animation-name: animatetop;
+    animation-name: animatetop;
+    
+    -webkit-animation-duration: 0.5s;
+    -moz-animation-duration: 0.5s;
+    -o-animation-duration: 0.5s;
+    animation-duration: 0.5s;
+}
+
+@-moz-keyframes animatetop {
+    from {top: 0; opacity: 0} 
+    to {top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 1}
+}
+@-webkit-keyframes animatetop {
+    from {top:-100%; opacity: 0} 
+    to {top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 1}
+}
+@-o-keyframes animatetop {
+    from {top: 0; opacity: 0} 
+    to {top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 1}
+}
+@keyframes animatetop {
+    from {top: -100%; opacity: 0} 
+    to {top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 1}
+}
+
+.messagebox-header,
+.messagebox-footer {
+    width: 100%;
+    color: #aaa;
+    height: 2em;
+    background-color: #234567;
+}
+.messagebox-header {
+    background: -webkit-linear-gradient(rgba(23,45,67,0.8), rgba(23,45,67,1), rgba(23,45,67,0.9));
+    background: -o-linear-gradient(rgba(23,45,67,0.8), rgba(23,45,67,1), rgba(23,45,67,0.9));
+    background: -moz-linear-gradient(rgba(23,45,67,0.7), rgba(23,45,67,1), rgba(23,45,67,0.9));
+    background: linear-gradient(rgba(23,45,67,0.7), rgba(23,45,67,1), rgba(23,45,67,0.9));
+}
+
+.messagebox-header-item {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.messagebox-title {
+    margin-left: 0.5em;
+    text-shadow: -1px -1px 1px rgb(0,0,0);
+}
+
+.messagebox-menu-bar {
+    font-size: 1em;
+    height: 100%; 
+    vertical-align: middle;
+    margin-left: 0.5em;
+    margin-right: 1.5em;
+}
+
+.messagebox-contents-box {
+    padding: 0.5em;
+    font-size: 1em;
+    background-color: #ccc;
+}
+
+.messagebox-close-button-wrap {
+    float: right;
+    overflow: hidden;
+    height: 100%;
+    margin-right: 0.5em;
+}
+
+.messagebox-close-button {
+    position: relative;
+    width: 1em;
+    height: 1em;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.messagebox-close-button::before,
+.messagebox-close-button::after {
+    content: "";
+    position: absolute;
+    left: 45%;
+    width: 2px;
+    height: 1em;
+    background-color: #aaa;
+    box-shadow: -1px -1px 1px rgba(0,0,0,0.6);
+}
+.messagebox-close-button::before {
+    transform: rotate(45deg);
+}
+.messagebox-close-button::after {
+    transform: rotate(-45deg);
+}
+
+.messagebox-close-button:hover,
+.messagebox-close-button:focus {
+    cursor: pointer;
+}
+
+.messagebox-buttons {
+    position: relative;
+    height: 100%;
+}
+
+.messagebox-button {
+    float: right;
+    overflow: hidden;
+    width: 12%;
+    height: 100%;
+    
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.messagebox-button > div {
+    position: relative;
+    
+    width: 90%;
+    height: 75%;
+    border: solid 1px;
+    
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.messagebox-button > div:hover {
+    cursor: pointer;
+}
+
+/***************** DPad styles ********************/
+
+.dpad-panel {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    width: 10em;
+    height: 10em;
+}
+
+.dpad-container {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+}
+
+.dpad-key {
+    position: absolute;
+    display: block;
+    width: 27%;
+    height: 27%;
+    border-radius: 25%;
+    
+    background-color: #181818;
+    font-size: 50%;
+    cursor: pointer;
+    box-shadow: 1px 2px 0px #aaa, 1px 2px 5px #000;
+    /*
+    */
+}
+.dpad-key:active {
+    box-shadow: inset -1px -1px #aaa;
+    
+    /*
+    */
+}
+.dpad-key span {
+    position: absolute;
+    margin: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #151515;
+    text-align : center;
+    text-shadow: 0 0 1px rgb(180, 180, 180), 1px 1px 2px rgb(220, 220 ,220);
+    /*
+    text-shadow: 1px 1px 2px #aaa;
+    */
+    
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version, currently */
+}
+.dpad-key-up {
+    left: 36.5%;
+    top: 2.5%;
+}
+.dpad-key-right {
+    left: 70.5%;
+    top: 36.5%;
+}
+.dpad-key-down {
+    left: 36.5%;
+    top: 70.5%;
+}
+.dpad-key-left {
+    left: 2.5%;
+    top: 36.5%;
+}
+.dpad-key-center {
+    left: 36.5%;
+    top: 36.5%;
+}
+
+@media only screen and (orientation : landscape) {
+    .dpad-panel {
+        right: 1em;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+@media only screen and (orientation : portrait) {
+    .dpad-panel {
+        bottom: 1em;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+/***************** TPanel styles ********************/
+
+.tpanel {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 9;
+    opacity: 0;
+    left: 0;
+    top: 0;
+    /*
+    for test only
+    background-color: red;
+    */
+}
+.kpad {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    background-color: #819196;
+}
+
+.kkey {
+    position: absolute;
+    background-color: #043647;
+    box-sizing: border-box;
+    border-color: #819196;
+    border-style: solid;
+    border-width: 2px;
+}
+
+.kkey:active {
+    background-color: #4D7C8C;
+}
+
+.icon {
+    position: absolute;
+    border-color: #C1CDE8;
+    border-style: solid;
+    width: 1em;
+    height: 1em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.icon.icon-up {
+    border-width: 1px 0 0 1px;
+}
+
+.icon.icon-down {
+    border-width: 0 1px 1px 0;
+}
+
+.icon.icon-left {
+    border-width: 0 0 1px 1px;
+}
+
+.icon.icon-right {
+    border-width: 1px 1px 0 0;
+}

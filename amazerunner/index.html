@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>A Maze Runner</title>
+        <style>
+            .contentsview {
+                position: absolute;
+                left: 50%;
+                -ms-transform: translate(-50%, 0);
+                -webkit-transform: translate(-50%, 0);
+                -o-transform: translate(-50%, 0);
+                -moz-transform: translate(-50%, 0);
+                transform: translate(-50%, 0);
+            }
+            .pagetitle {
+                text-align: center;
+            }
+            .headerbar .group {
+                margin-right: 10px;
+            }
+        </style>
+        <script src="maze.js"></script>
+        <script type="text/javascript">
+            function load() {
+                resetMaze();
+            }
+            
+            function resetMaze() {
+                var rows, cols, size;
+                var sizeValue = document.getElementById("txtSize").value;
+                if (sizeValue && sizeValue.trim() != "") {
+                    size = sizeValue.split("x");
+                    if (2 == size.length) {
+                        rows = size[0].trim();
+                        cols = size[1].trim();
+                    } else {
+                        alert("The speified size is not in correct format.");
+                        return;
+                    }
+                }
+                
+                if (!rows || !cols)
+                {
+                    size = document.getElementById("selSize").value.split("x");
+                    rows = size[0];
+                    cols = size[1];
+                }
+                
+                if (!window.maze) {
+                    window.maze = Maze("testcanvas", 50, 50);
+                } else {
+                    maze.reset("testcanvas", rows, cols);
+                }
+                
+                var canvas = document.getElementById("testcanvas");
+                canvas.addEventListener("mousedown", onPointerDown, false);
+                canvas.addEventListener("mouseup", onPointerUp, false);
+                canvas.addEventListener("mousemove", onPointerMove, false);
+                canvas.addEventListener("mouseout", onPointerOut, false);
+                canvas.addEventListener("touchstart", onPointerDown, false);
+                canvas.addEventListener("touchend", onPointerUp, false);
+                canvas.addEventListener("touchmove", onPointerMove, false);
+                canvas.addEventListener("touchleave", onPointerOut, false);
+                
+                maze.paint();
+            }
+            function onPointerDown(evt) {
+                maze.onPointerDown(evt);
+            }
+            function onPointerUp(evt) {
+                maze.onPointerUp(evt);
+            }
+            function onPointerMove(evt) {
+                maze.onPointerMove(evt);
+            }
+            function onPointerOut(evt) {
+                maze.onPointerOut(evt);
+            }
+        </script>
+    </head>
+    <body onload="load();">
+        <div class="contentsview">
+            <div class="pagetitle"><h2>A Maze Runner</h2></div>
+            <hr>
+            <div class="headerbar">
+                <span class="group">
+                    <label>Select Size:</label>
+                    <select id="selSize">
+                        <option value="10x10">10x10</option>
+                        <option value="20x20">20x20</option>
+                        <option value="30x30">30x30</option>
+                        <option value="40x40">40x40</option>
+                        <option value="50x50">50x50</option>
+                        <option value="60x60">60x60</option>
+                    </select>
+                </span>
+                <span class="group">
+                    <label>Input size (rows x cols):</label>
+                    <input type="text" id="txtSize">
+                </span>
+                <span class="group">
+                    <input type="button" value="Reset" name="reset" onclick="resetMaze()">
+                </span>
+            </div>
+            <hr>
+            <canvas id="testcanvas"  width="960" height="960">no canvas available.</canvas>
+        </div>
+    </body>
+</html>

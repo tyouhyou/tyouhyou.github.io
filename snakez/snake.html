@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+    <title>Snake</title>
+    
+    <link rel="shortcut icon" href="snake.ico" />
+    
+    <script type="text/javascript" src="https://bbcdn.githack.com/tyouhyou/zlibjs/raw/master/z.js"></script>
+    <script type="text/javascript" src="https://bbcdn.githack.com/tyouhyou/zlibjs/raw/master/zui.js"></script>
+    <link rel="stylesheet" href="https://bbcdn.githack.com/tyouhyou/zlibjs/raw/master/zui.css" type="text/css" />
+
+    <!--
+    <script type="text/javascript" src="https://bb.githack.com/tyouhyou/zlibjs/raw/master/z.js"></script>
+    <script type="text/javascript" src="https://bb.githack.com/tyouhyou/zlibjs/raw/master/zui.js"></script>
+    <link rel="stylesheet" href="https://bb.githack.com/tyouhyou/zlibjs/raw/master/zui.css" type="text/css" />
+    -->
+    
+    <script type="text/javascript" src="./snake.js"></script>
+    <link rel="stylesheet" href="./snake.css" type="text/css" />
+</head>
+<body>
+    <header></header>
+    <nav></nav>
+    <section>
+        <canvas id="playground"></canvas>
+    </section>
+    <aside></aside>
+    <footer></footer>
+    <div id='tpanel'></div>
+    <div id="msgbox"></div>
+    
+    <script type="text/javascript">
+        /* global SnakeGame MessageBox, TPanel */
+        
+        var dw = document.documentElement.clientWidth,
+            dh = document.documentElement.clientHeight,
+            ww = window.innerWidth,
+            wh = window.innerHeight,
+            w = Math.min(dw, ww) || 0,
+            h = Math.min(dh, wh) || 0,
+            rectW = w > h ? h : w;
+            
+        var game = new SnakeGame({
+            playgroundId: "playground",
+            width: rectW,
+            height: rectW,
+            cols: 20,
+            rows: 20,
+            touchpanel: new TPanel({owner: "#tpanel", intervalMin: 50, moveMin: 30}),
+            messagebox: new MessageBox({owner: "#msgbox"})
+        });
+        
+        // var dPad = new DPad();
+        // dPad.onpressdown = game.keydownHandler.bind(game);
+        // dPad.showup();
+        
+        game.start();
+    </script>
+</body>
+</html>
+
