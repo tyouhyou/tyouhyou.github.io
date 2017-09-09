@@ -18,7 +18,7 @@ function Game(arg) {
     
     this.gameboard = $(arg.gameboard).addClass(Game.gameboardClass);
     this.playground = new Playground(arg.playground);
-    this.scoreboard = new Scoreboard({board: arg.scoreboard});
+    this.scoreboard = new Scoreboard(arg.scoreboard);
     
     this.exports = {
         init: this.init.bind(this),
@@ -36,31 +36,34 @@ Game.prototype = {
     
     onKey: function(key) {
         switch (key) {
-            case KPad.Key.UP:
-                this.currentBrick.tryRotate(this.board);
-                break;
-            case KPad.Key.DOWN:
-                while (this.currentBrick.tryMoveTo(Direction.down, this.board)){}
-                break;
-            case KPad.Key.LEFT:
-                this.currentBrick.tryMoveTo(Direction.left, this.board);
-                break;
-            case KPad.Key.RIGHT:
-                this.currentBrick.tryMoveTo(Direction.right, this.board);
-                break;
-            default:
-                break;
+        case KPad.Key.UP:
+            this.currentBrick.tryRotate(this.board);
+            break;
+        case KPad.Key.DOWN:
+            while (this.currentBrick.tryMoveTo(Direction.down, this.board)){}
+            break;
+        case KPad.Key.LEFT:
+            this.currentBrick.tryMoveTo(Direction.left, this.board);
+            break;
+        case KPad.Key.RIGHT:
+            this.currentBrick.tryMoveTo(Direction.right, this.board);
+            break;
+        default:
+            // do nothing
+            break;
         }
     }
     ,
-    init: function(arg) {
+    init: function() {
         // TODO: take arguments, such as level, drawboardornot, cols/rows ...
         this.playground.init({"cols":this.cols,"rows":this.rows});
+        this.scoreboard.init();
     }
     ,
     clear: function() {
         this.playground.clear();
         this.currentBrick = null;
+        this.nextBrick = null;
         if (!!this.board && !!this.board.cells) {
             this.board.cells.forEach(function(cell){
                 cell = null;
@@ -83,7 +86,7 @@ Game.prototype = {
     start: function() {
         this.clear();
         
-        if (!this.takeNewBrickOut()) {
+        if (!this.takeABrickOut()) {
             // TODO: messagebox
             alert ("Cannot restart.");
             clearInterval(this.looper);
@@ -97,10 +100,10 @@ Game.prototype = {
         if (!this.currentBrick.tryMoveTo(Direction.down, this.board)) {
             this.layBrick(this.currentBrick);
             this.currentBrick = null;
-            if (!this.takeNewBrickOut()) {
+            if (!this.takeABrickOut()) {
                 // TODO: messagebox
                 clearInterval(this.looper);
-                if (confirm ("You lost.")) {
+                if (confirm ("You lost. Try again?")) {
                     this.start();
                 }
             }
@@ -133,16 +136,30 @@ Game.prototype = {
         return template({"context": this.playground.getContext(), "minoWidthInPx": this.playground.cellSize});
     }
     ,
-    takeNewBrickOut: function() {
-        if (!!this.currentBrick) {
-            return false;
+    takeABrickOut: function() {
+        var ret = false;
+
+        if (!!this.currentBrick && !!this.nextBrick) {
+            return ret;
         }
         
+        this.scoreboard.clearNext(this.nextBrick);
+        if (this.nextBrick) {
+            this.currentBrick = this.nextBrick;
+        } else {
+            this.currentBrick = this.makeBrick();
+        }
+
         var row = 0, col = 0;
-        
-        this.currentBrick = this.makeBrick();
         col = Math.round((this.board.cols - this.currentBrick.getVector()) / 2);
-        return this.currentBrick.tryMoveTo([row, col], this.board);
+        ret = this.currentBrick.tryMoveTo([row, col], this.board);
+        
+        if (ret) {
+            this.nextBrick = this.makeBrick();
+            this.scoreboard.drawNext(this.nextBrick);
+        }
+
+        return ret;
     }
     ,
     layBrick: function(brick) {
@@ -167,7 +184,7 @@ Game.prototype = {
         for(row = this.rows - 1; row >= 0; row --) {
             occupied = 0;
             for(col = this.cols - 1; col >= 0; col --) {
-                if (!!this.board.cells[row * this.cols + col]) {
+                if (this.board.cells[row * this.cols + col]) {
                     occupied ++;
                 }
             }
@@ -197,7 +214,7 @@ Game.prototype = {
                         curcell = row * this.cols + col;
                         cpycell = (row+dn)*this.cols + col;
                         this.board.cells[cpycell] = this.board.cells[curcell];
-                        if (!!this.board.cells[cpycell]) {
+                        if (this.board.cells[cpycell]) {
                             this.board.cells[cpycell].translate(0, dn * this.playground.cellSize, true);
                         }
                         this.board.cells[curcell] = null;
@@ -226,7 +243,7 @@ function Playground(arg) {
 
 Playground.prototype = {
     init: function(arg) {
-        if (!!arg) {
+        if (arg) {
             this.cols = arg.cols;
             this.rows = arg.rows;
         }
@@ -247,7 +264,6 @@ Playground.prototype = {
         canvasLeft = (w - this.canvas.width()) / 2;
         this.canvas.top(canvasTop);
         this.canvas.left(canvasLeft);
-        //this.drawGrid();
     }
     ,
     getContext: function() {
@@ -257,6 +273,8 @@ Playground.prototype = {
     setCanvasSize: function(width, height) {
         this.canvas[0].width = width;
         this.canvas[0].height = height;
+        this.canvas.width(width);
+        this.canvas.height(height);
     }
     ,
     drawGrid: function() {
@@ -292,11 +310,59 @@ function Scoreboard(arg) {
     if (!(this instanceof Scoreboard)) {
         return new Scoreboard(arg);
     }
-    this.init(arg);
+    
+    var g;
+    if ("string" === typeof arg) {
+        g = arg;
+    } else {
+        g = arg.ground;
+    }
+
+    this.board = $(g).addClass([Game.scoreboardClass, Game.boardClass]);
+    this.next = $("canvas", this.board);
+    this.context = this.next[0].getContext("2d");
 }
 
 Scoreboard.prototype = {
-    init: function(arg) {
-        this.board = $(arg.board).addClass([Game.scoreboardClass, Game.boardClass]);
+    init: function() {      
+        var w = this.board.width() - 2;
+        this.setSizeOfNext(w, w);
+    }
+    ,
+    drawNext: function(brick) {
+        if (!brick) return;
+
+        var ports = brick.getMinos();
+        var pt = this.getStartPtX(brick);
+
+        ports.forEach(function(port) {
+            port.mino.translate(pt, pt, false);
+            port.mino.draw(this.context);
+            port.mino.translate(-pt, -pt, false);
+        }, this);
+    }
+    ,
+    clearNext: function(brick) {
+        if (!brick) return;
+        var ports = brick.getMinos();
+        var pt = this.getStartPtX(brick);
+
+        ports.forEach(function(port){
+            port.mino.translate(pt, pt, false);
+            port.mino.clear(this.context);
+            port.mino.translate(-pt, -pt, false);            
+        }, this);
+    }
+    ,
+    getStartPtX: function(brick) {
+        var cellsize = brick.getMinoWidth();
+        return (((this.next.width() / cellsize) - brick.getVector()) / 2 ) * cellsize;
+    }
+    ,
+    setSizeOfNext: function(w, h) {
+        this.next.width(w);
+        this.next.height(h);
+        this.next[0].width = w;
+        this.next[0].height = h;
     }
 };

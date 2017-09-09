@@ -1,90 +1,90 @@
 /* global $U Path2D CanvasRenderingContext2D */
 
 var C = $U.create(Unit, {
-        "vector": 3,
-        "ports" : [[1,0],[0,1],[1,1],[1,2],[2,1]],
-        "color": "#C2A7D9",
-        "tryRotate": function(){},
-    }, true);
+    "vector": 3,
+    "ports" : [[1,0],[0,1],[1,1],[1,2],[2,1]],
+    "color": "#C2A7D9",
+    "tryRotate": function(){},
+}, true);
             
 var S = $U.create(Unit, {
-        "vector": 4,
-        "ports": [[2,0],[2,1],[2,2],[1,2],[1,3]],
-        "color": "#C4BFDB",
-    }, true);
+    "vector": 4,
+    "ports": [[2,0],[2,1],[2,2],[1,2],[1,3]],
+    "color": "#C4BFDB",
+}, true);
     
 var Z = $U.create(Unit, {
-        "vector": 4,
-        "ports": [[1,0],[1,1],[2,1],[2,2],[2,3]],
-        "color": "#B0D6CD",
-    }, true);
+    "vector": 4,
+    "ports": [[1,0],[1,1],[2,1],[2,2],[2,3]],
+    "color": "#B0D6CD",
+}, true);
     
 var JJ = $U.create(Unit, {
-        "vector": 4,
-        "ports": [[1,1],[1,2],[2,1],[2,2],[2,3]],
-        "color": "#0FBD91",
-    }, true);
+    "vector": 4,
+    "ports": [[1,1],[1,2],[2,1],[2,2],[2,3]],
+    "color": "#0FBD91",
+}, true);
     
 var LL = $U.create(Unit, {
-        "vector": 4,
-        "ports": [[0,1],[1,1],[1,2],[2,1],[2,2]],
-        "color": "#2FD119",
-    }, true);
+    "vector": 4,
+    "ports": [[0,1],[1,1],[1,2],[2,1],[2,2]],
+    "color": "#2FD119",
+}, true);
 
 var L = $U.create(Unit, {
-        "vector": 2,
-        "ports": [[0,0],[1,0],[1,1]],
-        "color": "#6ea378",
-    }, true);
+    "vector": 2,
+    "ports": [[0,0],[1,0],[1,1]],
+    "color": "#6ea378",
+}, true);
 
 var J = $U.create(Unit, {
-        "vector": 4,
-        "ports": [[0,1],[0,2],[1,2],[2,2],[3,2]],
-        "color": "#335650",
-    }, true);
+    "vector": 4,
+    "ports": [[0,1],[0,2],[1,2],[2,2],[3,2]],
+    "color": "#335650",
+}, true);
 
 var T = $U.create(Unit, {
-        "vector": 3,
-        "ports": [[0,1],[1,1],[2,0],[2,1],[2,2]],
-        "color": "#5c4260",
-    }, true);
+    "vector": 3,
+    "ports": [[0,1],[1,1],[2,0],[2,1],[2,2]],
+    "color": "#5c4260",
+}, true);
 
 var SL = $U.create(Unit, {
-        "vector": 3,
-        "ports": [[2,0],[2,1],[2,2],[1,2],[0,2]],
-        "color": "#a42aba",
-    }, true);
+    "vector": 3,
+    "ports": [[2,0],[2,1],[2,2],[1,2],[0,2]],
+    "color": "#a42aba",
+}, true);
     
 var U = $U.create(Unit, {
-        "vector": 3,
-        "ports": [[1,0],[1,2],[2,0],[2,1],[2,2]],
-        "color": "#C0E391",
-    }, true);
+    "vector": 3,
+    "ports": [[1,0],[1,2],[2,0],[2,1],[2,2]],
+    "color": "#C0E391",
+}, true);
     
 var ZZ = $U.create(Unit, {
-        "vector": 5,
-        "ports": [[1,0],[1,1],[2,2],[2,3],[2,4]],
-        "color": "#F5F105",
-    }, true);
+    "vector": 5,
+    "ports": [[1,0],[1,1],[2,2],[2,3],[2,4]],
+    "color": "#F5F105",
+}, true);
     
 var SS = $U.create(Unit, {
-        "vector": 5,
-        "ports": [[2,0],[2,1],[2,2],[1,3],[1,4]],
-        "color": "#F5B753",
-    }, true);
+    "vector": 5,
+    "ports": [[2,0],[2,1],[2,2],[1,3],[1,4]],
+    "color": "#F5B753",
+}, true);
 
 var I = $U.create(Unit, {
-        "vector": 5,
-        "ports": [[0,2],[1,2],[2,2],[3,2],[4,2]],
-        "color": "#ED8F66",
-    }, true);
+    "vector": 5,
+    "ports": [[0,2],[1,2],[2,2],[3,2],[4,2]],
+    "color": "#ED8F66",
+}, true);
     
 var D = $U.create(Unit, {
-        "vector": 1,
-        "ports": [[0,0]],
-        "color": "#ED66D2",
-        "tryRotate": function(){},
-    }, true);
+    "vector": 1,
+    "ports": [[0,0]],
+    "color": "#ED66D2",
+    "tryRotate": function(){},
+}, true);
     
 var Bricks = [C, S, Z, J, L, T, SL, JJ, LL, U, ZZ, SS, I, D];
 Object.freeze(Bricks);
@@ -122,18 +122,23 @@ Mino.prototype = {
             } else {
                 this.resize(arg.size.width, arg.size.height, false);
             }
-        } else if (!!this.svgMino) {
+        } else if (this.svgMino) {
+            /**
+             * It is preferred to use SVG path to create Path2D.
+             * However, ms Edge and IE do not support it. Just put
+             * the svg path aside temporarily, and use the folloing function.
+             */
+
             //this.path = new Path2D(this.svgMino);
-            this.path = this.makePath2D();
         }
         
-        if (!!arg.anchor) {
+        if (arg.anchor) {
             this.anchor = arg.anchor;
         } else {
             this.anchor = {x:0, y:0};
         }
         
-        if (!!arg.style) {
+        if (arg.style) {
             this.style = arg.style;
         }
         
@@ -146,8 +151,7 @@ Mino.prototype = {
         this.width = width;
         this.height = height;
         this.svgMino = "M1 1 h " + (this.width - 1) + " v " + (this.height - 1) + " h -" + (this.width - 1) + " Z";
-        //this.path = new Path2D(this.svgMino);
-        this.path = this.makePath2D();
+
         if (redraw) {
             this.moveTo(this.anchor.x, this.anchor.y, redraw);
         }
@@ -187,42 +191,43 @@ Mino.prototype = {
         }
     }
     ,
-    draw: function() {
-        this.ctx.save();
-        if (!!this.style.fillStyle) {
-            this.ctx.fillStyle = this.style.fillStyle;
+    draw: function(context) {
+        var ctx = this.ctx;
+        if (context) {
+            ctx = context;
+        }
+
+        ctx.save();
+        if (this.style.fillStyle) {
+            ctx.fillStyle = this.style.fillStyle;
         }
         
         var scale = 0.95;       // canvas draw at 0.5 px
         var offset = 0.5;
-        this.ctx.transform(this.ratio * scale, 0, 0, this.ratio * scale, this.anchor.x + offset, this.anchor.y + offset);
-        this.ctx.fill(this.path);
-        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-        this.ctx.restore();
-    }
-    ,
-    clear: function() {
-        if (!!this.anchor) {
-            this.ctx.translate(this.anchor.x, this.anchor.y);
-            this.ctx.clearRect(0, 0, this.width, this.height);
-            this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-        }
-    }
-    ,
-    /**
-     * It is preferred to use SVG path to create Path2D.
-     * However, ms Edge and IE do not support it. Just put
-     * the svg path aside temporarily, and use the folloing function.
-     */
-    makePath2D: function() {
-        "M1 1 h " + (this.width - 1) + " v " + (this.height - 1) + " h -" + (this.width - 1) + " Z"
         var path = new Path2D();
+
         path.moveTo(1, 1);
         path.lineTo(this.width - 1, 1);
         path.lineTo(this.width - 1, this.height - 1);
         path.lineTo(1, this.height - 1);
         path.closePath();
-        return path;
+
+        ctx.transform(this.ratio * scale, 0, 0, this.ratio * scale, this.anchor.x + offset, this.anchor.y + offset);
+        ctx.fill(path);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.restore();
+    }
+    ,
+    clear: function(context) {
+        var ctx = this.ctx;
+        if (this.anchor) {
+            if (context) {
+                ctx = context;
+            }
+            ctx.translate(this.anchor.x, this.anchor.y);
+            ctx.clearRect(0, 0, this.width, this.height);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+        }
     }
 };
 
@@ -248,32 +253,37 @@ Unit.prototype = {
         return {
             tryMoveTo: this.tryMoveTo.bind(this),
             tryRotate: this.tryRotate.bind(this),
-            getMinos: function(){return this.ports}.bind(this),
-            getVector: function(){return this.vector}.bind(this),
-            getAnchor: function(){return this.anchor}.bind(this),
+            getMinos: function(){return this.ports;}.bind(this),
+            getVector: function(){return this.vector;}.bind(this),
+            getAnchor: function(){return this.anchor;}.bind(this),
+            getMinoWidth: function(){return this.minoWidthInPx;}.bind(this)
         };
     }
     ,
     init: function(arg) {
-        if (!!arg) {
+        if (arg) {
             if (arg instanceof CanvasRenderingContext2D) {
                 this.context = arg;
             } else {
-                this.context = !!arg.context ? arg.context : this.context;
-                this.vector = !!arg.vector ? arg.vector : this.vector;
-                this.minoWidthInPx = !!arg.minoWidthInPx ? arg.minoWidthInPx : this.minoWidthInPx;
-                this.ports = !!arg.ports ? arg.ports : this.ports;
-                this.color = !!arg.color ? arg.color : this.color;
+                this.context = arg.context ? arg.context : this.context;
+                this.vector = arg.vector ? arg.vector : this.vector;
+                this.minoWidthInPx = arg.minoWidthInPx ? arg.minoWidthInPx : this.minoWidthInPx;
+                this.ports = arg.ports ? arg.ports : this.ports;
+                this.color = arg.color ? arg.color : this.color;
             }
         }
         
         if (!this.strMino) {
             this.strMino = "M1 1 h " + (this.minoWidthInPx - 1) + " v " + (this.minoWidthInPx - 1) + " h -" + (this.minoWidthInPx - 1) + " Z";
         }
-        var mino = $U.create(Mino, {"width": this.minoWidthInPx,
-                                    "height": this.minoWidthInPx, 
-                                    "style": this.color ? {"fillStyle": this.color} : this.style,
-                                    "svgMino": this.strMino});
+        var mino = $U.create(Mino, 
+                            {
+                                "width": this.minoWidthInPx,
+                                "height": this.minoWidthInPx, 
+                                "style": (this.color ? {"fillStyle": this.color} : this.style),
+                                "svgMino": this.strMino,
+                            },
+                            true);
                                     
         var minoIdx = 0;
         this.ports.forEach(function(cell) {
@@ -292,17 +302,17 @@ Unit.prototype = {
         
         if ("number" == typeof directionOrAnchor) {
             switch (directionOrAnchor) {
-                case Direction.left:
-                    col = this.anchor.col - 1;
-                    break;
-                case Direction.right:
-                    col = this.anchor.col + 1;
-                    break;
-                case Direction.down:
-                    row = this.anchor.row + 1;
-                    break;
-                default:
-                    break;
+            case Direction.left:
+                col = this.anchor.col - 1;
+                break;
+            case Direction.right:
+                col = this.anchor.col + 1;
+                break;
+            case Direction.down:
+                row = this.anchor.row + 1;
+                break;
+            default:
+                break;
             }
             toclear = true;   // clear minos and then move to new location
         } else if (Array.isArray(directionOrAnchor)) {
@@ -313,8 +323,9 @@ Unit.prototype = {
             row = directionOrAnchor.row;
         }
         
-        if (!!board) {
-            var checkBoard = true;
+        var checkBoard;
+        if (board) {
+            checkBoard = true;
             this.ports.forEach(function (port) {
                 var mr = row + port[MinoRCIdx.row];
                 var mc = col + port[MinoRCIdx.col];
@@ -357,7 +368,7 @@ Unit.prototype = {
             ms.push({row:y, col:x, port:this.ports[i]});
         }
         
-        if (!!board) {
+        if (board) {
             var checkBoard = true;
             ms.forEach(function (port) {
                 var mr = port.row + this.anchor.row;
