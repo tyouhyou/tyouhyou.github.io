@@ -148,6 +148,28 @@
             return this.substr(position, searchString.length) === searchString;
         };
     }
+
+    // https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/children
+    // Overwrites native 'children' prototype.
+    // Adds Document & DocumentFragment support for IE9 & Safari.
+    // Returns array instead of HTMLCollection.
+    (function(constructor) {
+        if (constructor &&
+            constructor.prototype &&
+            constructor.prototype.children == null) {
+            Object.defineProperty(constructor.prototype, 'children', {
+                get: function() {
+                    var i = 0, node, nodes = this.childNodes, children = [];
+                    while (node = nodes[i++]) {
+                        if (node.nodeType === 1) {
+                            children.push(node);
+                        }
+                    }
+                    return children;
+                }
+            });
+        }
+    })(window.Node || window.Element);
     
     /**
      * @description Utilities
@@ -302,25 +324,24 @@
             if (undefined == parent) return null;
             if (!newProperties) return parent;
             
-            var T = function(){};
-            if (!independant) {
-                T.prototype = Util.shallowClone(parent.prototype);
-                Util.extend(false, T.prototype, newProperties);
-            }
             return function() {
-                if (independant) {
-                    T.prototype = Util.deepClone(parent.prototype);
-                    Util.extend(true, T.prototype, newProperties);
+                function T(){};
+                if (parent.prototype) {
+                    T.prototype = Util.clone(independant, parent.prototype);
+                }
+                if (T.prototype) {
+                    Util.extend(independant, T.prototype, newProperties);
                 }
                 var t = new T();
                 var p = parent.prototype;
                 parent.prototype = t;
-                var F = parent.apply(t, arguments);
+                var f = parent.apply(t, arguments);
                 parent.prototype = p;
-                return F;
+                return f;
             };
         }
         ,
+        // don't use this method, use create instead. it's here just for test.
         inherit : function(parent, newProperties, child) {
             var _child = this, 
                 _parent, 
@@ -350,7 +371,7 @@
             }
 
             // TODO: check null / undefined properties argument
-            var proPar = Util.create(_parent, _properties);
+            var proPar = Util.create(_parent, _properties, true);
             Util.extend(proPar.prototype, _child.prototype);
             _child.prototype = new proPar();
             _child.prototype.constructor = _child;
@@ -1167,6 +1188,28 @@
             }
             
             return this;
+        }
+        ,
+        remove: function(child) {
+            if (this.isElement(child)) {
+                this.forEach(function(index, element){
+                    element.removeChild(child);
+                });
+            } else if (child instanceof DOM) {
+                this.forEach(function(index, element){
+                    child.forEach(function(index, child) {
+                        element.removeChild(child);
+                    });
+                });
+            } else if (typeof child == "String") {
+                this.remove(new DOM(child)).bind(this);
+            } else if (null == child || undefined == child) {
+                this.forEach(function(index, element) {
+                    for (var i = 0; i < element.children.length; i++) {
+                        element.removeChild(element.children[i]);
+                    }
+                });
+            }
         }
     }
     ;
