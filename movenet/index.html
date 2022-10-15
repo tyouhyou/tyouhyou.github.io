@@ -4,127 +4,53 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js" rel="external nofollow" ></script>
-    <script src="./modules/move_detector.mjs" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js" rel="external nofollow" ></script>
     <title>Move Detect</title>
 </head>
 <body>
     <div style="width: 100%; padding-top: 10px;"></div>
-    <button type="button" onclick="load()">load model</button>
+    <button id="load" type="button" onclick="load()">load model</button>
     <button type="button" onclick="predict()">predict image</button>
-    <button type="button" onclick="openCamera()">open camera</button>
-    <button type="button" onclick="start()">start capture</button>
-    <button type="button" onclick="stop()">stop capture</button>
-    <button type="button" onclick="closeCamera()">close camera</button>
-    <button name="clear" type="button" onclick="clearLog()">clear log</button>
+    <button type="button" onclick="st.clearLog()">clear log</button>
+    <br />
+    <button type="button" onclick="st.openCamera()">open camera</button>
+    <button type="button" onclick="st.startCapture()">start capture</button>
+    <button type="button" onclick="st.stopCapture()">stop capture</button>
+    <button type="button" onclick="st.closeCamera()">close camera</button>
     <div style="width: 100%; height: 10px;"></div>
     <canvas id="imgme" width="192" height="192"></canvas>
-    <video id="webcam" width="192" height="192"></video>
     <div style="width: 100%; padding-top: 10px;"></div>
     <textarea name="log" id="log" cols="60" rows="30" style="overflow: scroll;" placeholder="logs left here"></textarea>
 
     <script type="module">
-        import {MoveDetector} from "./modules/move_detector.mjs";
-        window.md = new MoveDetector("webcam");
+        import * as script from "./modules/script.mjs";
+        window.st = script;
     </script>
     <script type="text/javascript">
-        let logEle = document.getElementById("log");
-        let canvasEle = document.getElementById("imgme");
-        let canvasCtx = canvasEle.getContext("2d");
-        let videoEle = document.getElementById("webcam");
-
-        loadImage();
-        
-        function addLog(log)
-        {
-            var l = logEle.value;
-            l += "\n" + log;
-            logEle.value = l;
-        }
-
-        function clearLog()
-        {
-            logEle.value = "";
-        }
+        let lb = document.getElementById("load");
+        disableButtons(true, [ lb ]);
 
         async function load()
         {
-            addLog("Loading model ...");
-            await window.md.loadSingle();
-            addLog("model loaded.");
+            await st.load();
+            disableButtons(false);
         }
 
-        async function predict(img = null)
+        async function predict()
         {
-            var rst = null;
-            if (!img)
-            {
-                rst = await window.md.predict(canvasEle);
-            }
-            else
-            {
-                rst = await window.md.predict(img);
-            }
-            addLog(rst);
-            drawResult(rst);
+            let rst = await st.predict();
+            st.drawResult(rst);
+            st.addLog(rst);
+            rst.dispose();
         }
 
-        function openCamera()
+        function disableButtons(disabled = false, exceptList)
         {
-            if (!!videoEle.srcObject) return;
-
-            navigator.mediaDevices.getUserMedia({video: true})
-                .then(function(stream) {
-                    videoEle.srcObject = stream;
-                });
-        }
-
-        function closeCamera()
-        {
-            if (!videoEle.srcObject) return;
-
-            videoEle.srcObject.getTracks().forEach(track => { track.stop() })
-            videoEle.srcObject = null;
-            videoEle.load();
-        }
-
-        async function start()
-        {
-            if (!videoEle.srcObject) return;
-
-            videoEle.play();
-            // var cam = window.md.getCamera(videoEle);
-            //while (!)
-            {
-                // donothing
-            }
-        }
-
-        function stop()
-        {
-            if (!videoEle.srcObject) return;
-
-            videoEle.pause();
-        }
-
-        async function loadImage()
-        {
-            let url = "./asset/sample.png";
-            let img = new Image();
-            await new Promise(r => img.onload=r, img.src=url);
-            canvasCtx.drawImage(img, 0, 0, 192, 192);
-        }
-
-        function drawResult(rst)
-        {
-            rst = rst.reshape([17, 3]);
-            var pts = rst.arraySync();
-            canvasCtx.fillStyle = 'red';
-            for (let i = 0; i < 17; i++) {
-                canvasCtx.beginPath();
-                canvasCtx.arc(192 * pts[i][1], 192 * pts[i][0], 2, 0, 2 * Math.PI, false);
-                canvasCtx.fill();
-            }
+            let btns = document.getElementsByTagName("button");
+            for(let btn of btns) {
+                if (!!exceptList && exceptList.includes(btn)) continue;
+                btn.disabled = disabled;
+            };
         }
     </script>
 </body>

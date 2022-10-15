@@ -5,6 +5,7 @@ export {
 // const url_multi = "https://tfhub.dev/google/tfjs-model/movenet/multipose/lightning/1";
 // const url_single = "https://tfhub.dev/google/tfjs-model/movenet/singlepose/lightning/4";
 const url_single = "./models/movenet_singlepose_lightning_4/model.json";
+const input_shape = [1,192,192,3];
 
 async function loadAsync(modelUri)
 {
@@ -19,6 +20,9 @@ class MoveDetector
     async loadSingle()
     {
         this.model = await loadAsync(url_single);
+        const warmup = await this.model.predict(tf.zeros(input_shape, 'int32'));
+        warmup.dataSync();
+        warmup.dispose();
     }
 
     async loadMulti()
@@ -28,7 +32,9 @@ class MoveDetector
 
     async predict(img = null)
     {
-        return await this.model.predict(tf.browser.fromPixels(img).reshape([1,192,192,3]));
+        let m = tf.browser.fromPixels(img);
+        let r = m.reshape(input_shape);
+        return await this.model.predict(r);
     }
 
     getCamera(videoEle)
