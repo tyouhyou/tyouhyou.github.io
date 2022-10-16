@@ -10,16 +10,15 @@ export{
     drawResult
 }
 
+import { VideoCapture } from "./capture.mjs"
 import { MoveDetector } from "./move_detector.mjs";
 
 let logEle = document.getElementById("log");
 let canvasEle = document.getElementById("imgme");
 let canvasCtx = canvasEle.getContext("2d");
-let videoEle = document.createElement("video");
-videoEle.width = 192;videoEle.height = 192;
-let flagCapture = false;
 
 let md = new MoveDetector();
+let cap = new VideoCapture(canvasEle);
 
 tf.setBackend('webgl');
 loadImage();
@@ -55,57 +54,32 @@ async function predict(img = null)
 
 async function openCamera()
 {
-    if (!!videoEle.srcObject) return;
-    const constraints = {
-        width: {min: 192, ideal: 192},
-        height: {min: 192, ideal: 192},
-        advanced: [
-          {width: 192, height: 192},
-          {aspectRatio: 1}
-        ]
-      };
-    await navigator.mediaDevices.getUserMedia({video: true})
-        .then(function(stream) {
-            const track = stream.getVideoTracks()[0];
-            track.applyConstraints(constraints)
-            .then(() => videoEle.srcObject = stream)
-        });
-    videoEle.play();
-    showVideo();
+    cap.openCamera(192, 192, false);
 }
 
 function closeCamera()
 {
-    if (!videoEle.srcObject) return;
-    stopCapture();
-    videoEle.srcObject.getTracks().forEach(track => { track.stop() })
-    videoEle.srcObject = null;
-    videoEle.load();
+    cap.closeCamera();
     loadImage();
 }
 
 function startCapture()
 {
-    if (!videoEle.srcObject) return;
-    flagCapture = true;
+    cap.startCapture((canvas) =>{
+        videoCaptured(canvas)
+    });
 }
 
 function stopCapture()
 {
-    if (!videoEle.srcObject) return;
-    flagCapture = false
+    cap.stopCapture();
 }
 
-async function showVideo()
+async function videoCaptured(ctx)
 {
-    canvasCtx.drawImage(videoEle, 0, 0, 192, 192);
-    if (flagCapture)
-    {
-        let rst = await predict(canvasEle);
-        drawResult(rst);
-        rst.dispose();
-    }
-    requestAnimationFrame(showVideo);
+    let rst = await predict(canvasEle);
+    drawResult(rst);
+    rst.dispose();
 }
 
 async function loadImage(url)
