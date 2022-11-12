@@ -89,44 +89,44 @@ var D = $U.create(Unit, {
 var TH = $U.create(Unit, {
     "vector": 4,
     "ports": [[1, 0], [1, 1], [1, 2], [1, 3]],
-    "color": "#319186",
+    "color": "#54ab32",
 }, true);
 
 var TO = $U.create(Unit, {
     "vector": 2,
     "ports": [[0, 0], [0, 1], [1, 0], [1, 1]],
-    "color": "#d6d59a",
+    "color": "#ebe70c",
     "tryRotate": function () { },
 }, true);
 
 var TM = $U.create(Unit, {
     "vector": 3,
     "ports": [[0, 1], [1, 0], [1, 1], [1, 2]],
-    "color": "#37522a",
+    "color": "#eb700c",
 }, true);
 
 var TL = $U.create(Unit, {
     "vector": 3,
     "ports": [[0, 0], [1, 0], [1, 1], [1, 2]],
-    "color": "#2d4d66",
+    "color": "#e3426f",
 }, true);
 
 var TLC = $U.create(Unit, {
     "vector": 3,
     "ports": [[0, 2], [1, 0], [1, 1], [1, 2]],
-    "color": "#563bd1",
+    "color": "#8832d9",
 }, true);
 
 var TS = $U.create(Unit, {
     "vector": 3,
     "ports": [[0, 1], [0, 2], [1, 0], [1, 1]],
-    "color": "#c84fd1",
+    "color": "#21a9ed",
 }, true);
 
 var TSC = $U.create(Unit, {
     "vector": 3,
     "ports": [[0, 0], [0, 1], [1, 1], [1, 2]],
-    "color": "#632740",
+    "color": "#1dd1a1",
 }, true);
 
 // var Bricks = [C, S, Z, J, L, T, SL, JJ, LL, U, ZZ, SS, I, D];
